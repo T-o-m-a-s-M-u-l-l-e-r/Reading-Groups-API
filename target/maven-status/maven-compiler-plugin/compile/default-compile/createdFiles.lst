@@ -1,0 +1,17 @@
+com\muller_tomas\reading_groups\dto\LoginRequest.class
+com\muller_tomas\reading_groups\config\PasswordConfig.class
+com\muller_tomas\reading_groups\GlobalExceptionHandler.class
+com\muller_tomas\reading_groups\service\UserService.class
+com\muller_tomas\reading_groups\TokenRevokedException.class
+com\muller_tomas\reading_groups\model\User.class
+com\muller_tomas\reading_groups\config\SecurityConfig.class
+com\muller_tomas\reading_groups\config\JwtTokenFilter.class
+com\muller_tomas\reading_groups\controller\AuthController.class
+com\muller_tomas\reading_groups\dto\AccessTokenResponse.class
+com\muller_tomas\reading_groups\dto\TokenPairResponse.class
+com\muller_tomas\reading_groups\config\JwtTokenProvider$TokenType.class
+com\muller_tomas\reading_groups\dto\RegisterRequest.class
+com\muller_tomas\reading_groups\config\JwtTokenProvider.class
+com\muller_tomas\reading_groups\DuplicateUserException.class
+com\muller_tomas\reading_groups\repository\UserRepository.class
+com\muller_tomas\reading_groups\ReadingGroupsApplication.class

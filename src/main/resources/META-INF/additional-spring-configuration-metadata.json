@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "jwt.secret",
+    "type": "java.lang.String",
+    "description": "Secret for signing JWT tokens"
+  },
+  {
+    "name": "app.public.paths",
+    "type": "java.lang.String",
+    "description": "Paths corresponding to publicly accesible endpoints"
+  }
+]}

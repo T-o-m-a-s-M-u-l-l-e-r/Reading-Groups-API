@@ -1,0 +1,16 @@
+C:\Users\mofje\eclipse-workspace\reading_groups\src\main\java\com\muller_tomas\reading_groups\config\JwtTokenFilter.java
+C:\Users\mofje\eclipse-workspace\reading_groups\src\main\java\com\muller_tomas\reading_groups\config\JwtTokenProvider.java
+C:\Users\mofje\eclipse-workspace\reading_groups\src\main\java\com\muller_tomas\reading_groups\config\PasswordConfig.java
+C:\Users\mofje\eclipse-workspace\reading_groups\src\main\java\com\muller_tomas\reading_groups\config\SecurityConfig.java
+C:\Users\mofje\eclipse-workspace\reading_groups\src\main\java\com\muller_tomas\reading_groups\controller\AuthController.java
+C:\Users\mofje\eclipse-workspace\reading_groups\src\main\java\com\muller_tomas\reading_groups\dto\AccessTokenResponse.java
+C:\Users\mofje\eclipse-workspace\reading_groups\src\main\java\com\muller_tomas\reading_groups\dto\LoginRequest.java
+C:\Users\mofje\eclipse-workspace\reading_groups\src\main\java\com\muller_tomas\reading_groups\dto\RegisterRequest.java
+C:\Users\mofje\eclipse-workspace\reading_groups\src\main\java\com\muller_tomas\reading_groups\dto\TokenPairResponse.java
+C:\Users\mofje\eclipse-workspace\reading_groups\src\main\java\com\muller_tomas\reading_groups\DuplicateUserException.java
+C:\Users\mofje\eclipse-workspace\reading_groups\src\main\java\com\muller_tomas\reading_groups\GlobalExceptionHandler.java
+C:\Users\mofje\eclipse-workspace\reading_groups\src\main\java\com\muller_tomas\reading_groups\model\User.java
+C:\Users\mofje\eclipse-workspace\reading_groups\src\main\java\com\muller_tomas\reading_groups\ReadingGroupsApplication.java
+C:\Users\mofje\eclipse-workspace\reading_groups\src\main\java\com\muller_tomas\reading_groups\repository\UserRepository.java
+C:\Users\mofje\eclipse-workspace\reading_groups\src\main\java\com\muller_tomas\reading_groups\service\UserService.java
+C:\Users\mofje\eclipse-workspace\reading_groups\src\main\java\com\muller_tomas\reading_groups\TokenRevokedException.java
