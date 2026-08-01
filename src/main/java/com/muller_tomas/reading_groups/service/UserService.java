@@ -27,15 +27,6 @@ public class UserService {
 		this.passwordEncoder = passwordEncoder;
 		this.jwtTokenProvider = jwtTokenProvider;
 	}
-	
-	public List<Group> getUserGroups(int userId) {
-		
-		//IF THE USER DOES NOT EXIST WE THROW SOMETHING
-		
-		//WE CAN RETURN EMPTY LIST IF NEED BE
-		
-		return null;
-	}
 
 	public TokenPairResponse createUser(RegisterRequest registerRequest) throws DuplicateUserException {
 

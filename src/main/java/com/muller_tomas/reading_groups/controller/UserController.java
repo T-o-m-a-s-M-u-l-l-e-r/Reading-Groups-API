@@ -41,11 +41,5 @@ public class UserController {
 		TokenPairResponse tokenPairResponse = userService.createUser(registerRequest);
 		return ResponseEntity.status(HttpStatus.CREATED).body(tokenPairResponse);
 	}
-	
-	@GetMapping("/me/groups")
-	public ResponseEntity<List<Group>> getUserGroups(@RequestHeader("Authorization") String accessToken) {
-		int userId = (int) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		return ResponseEntity.ok(userService.getUserGroups(userId));
-	}
 
 }
