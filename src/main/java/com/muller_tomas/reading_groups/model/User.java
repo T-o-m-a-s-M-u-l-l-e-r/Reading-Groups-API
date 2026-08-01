@@ -30,6 +30,25 @@ public class User {
 	
 	@ManyToMany(mappedBy = "users")
     private List<Group> groups = new ArrayList<>();
+	
+	public User() {
+	}
+
+	public User(int id, String username, String email, String passwordHash, List<Group> groups) {
+		super();
+		this.id = id;
+		this.username = username;
+		this.email = email;
+		this.passwordHash = passwordHash;
+		this.groups = groups;
+	}
+	
+	public User(String username, String email, String passwordHash) {
+		super();
+		this.username = username;
+		this.email = email;
+		this.passwordHash = passwordHash;
+	}
 
 	public int getId() {
 		return id;

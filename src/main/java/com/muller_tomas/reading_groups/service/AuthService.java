@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.muller_tomas.reading_groups.config.PasswordConfig;
 import com.muller_tomas.reading_groups.dto.LoginRequest;
 import com.muller_tomas.reading_groups.dto.TokenPairResponse;
 import com.muller_tomas.reading_groups.exception.InvalidTokenTypeException;
