@@ -1,5 +1,7 @@
 package com.muller_tomas.reading_groups.service;
 
+import java.util.List;
+
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.muller_tomas.reading_groups.dto.RegisterRequest;
 import com.muller_tomas.reading_groups.dto.TokenPairResponse;
 import com.muller_tomas.reading_groups.exception.DuplicateUserException;
+import com.muller_tomas.reading_groups.model.Group;
 import com.muller_tomas.reading_groups.model.User;
 import com.muller_tomas.reading_groups.repository.UserRepository;
 import com.muller_tomas.reading_groups.token.JwtTokenProvider;

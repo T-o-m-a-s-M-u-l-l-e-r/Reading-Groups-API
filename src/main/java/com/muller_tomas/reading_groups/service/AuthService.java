@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.muller_tomas.reading_groups.config.PasswordConfig;
 import com.muller_tomas.reading_groups.dto.LoginRequest;
 import com.muller_tomas.reading_groups.dto.TokenPairResponse;
 import com.muller_tomas.reading_groups.exception.InvalidTokenTypeException;
@@ -26,6 +27,7 @@ public class AuthService {
 			JwtTokenProvider tokenProvider) {
 		this.userService = userService;
 		this.tokenProvider = tokenProvider;
+		this.passwordEncoder = passwordEncoder;
 		refreshTokenBlacklist = new HashSet<String>();
 	}
 	
@@ -57,17 +59,20 @@ public class AuthService {
 		
 		TokenType tokenType = tokenProvider.getTokenType(refreshToken);
 		
-		if (tokenType == TokenType.REFRESH) {
+		if (tokenType != TokenType.REFRESH) {
+			throw new InvalidTokenTypeException("Invalid token type");
+		}
+		
+		if (!refreshTokenBlacklist.contains(refreshToken)) {
 			refreshTokenBlacklist.add(refreshToken);
 		} else {
-			throw new BadCredentialsException("Invalid token type");
+			throw new TokenRevokedException("Token has been revoked");
 		}
 		
 	}
 
 	public TokenPairResponse loginUser(LoginRequest loginRequest)
 			throws UsernameNotFoundException, BadCredentialsException {
-
 		User user = userService.findUserByUsernameOrEmail(loginRequest.getLogin());
 		boolean isPasswordCorrect = passwordEncoder.matches(loginRequest.getPassword(), user.getPasswordHash());
 
