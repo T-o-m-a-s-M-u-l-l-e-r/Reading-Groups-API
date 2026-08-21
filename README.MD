@@ -1,10 +1,10 @@
 # Reading Groups API
 
-A Spring Boot REST API for collaborative reading and annotation. Users can create accounts, join reading groups, and discuss specific passages by attaching comments and questions directly to the text.
+A Spring Boot REST API for collaborative reading and annotation. Users can create accounts, create and join reading groups, and discuss specific passages by attaching comments and questions directly to shared texts.
 
-The project focuses on building a secure backend using Spring Security with JWT authentication, refresh tokens, BCrypt password hashing, stateless session management, and PostgreSQL.
+The project focuses on building a secure backend using Spring Security with JWT authentication, refresh tokens, BCrypt password hashing, stateless session management, PostgreSQL, and file handling for reading materials.
 
-> **Status:** Work in progress. Authentication is complete, reading groups and annotations are ongoing.
+> **Status:** Work in progress. Authentication, reading group creation, and reading text upload are implemented. Group membership and annotations are ongoing.
 
 **Tech Stack:** Spring Boot 3 · Spring Security · JWT · JPA/Hibernate · PostgreSQL · Maven · Swagger/OpenAPI · JUnit 5 · Mockito
 
@@ -21,6 +21,12 @@ The project focuses on building a secure backend using Spring Security with JWT 
 - BCrypt password hashing
 - Stateless Spring Security configuration
 - Custom JWT authentication filter
+- Reading group creation
+- PDF reading text upload and storage
+- Uploaded PDF validation
+- Retrieval of groups associated with a user
+- Retrieval of reading group members
+- User/group many-to-many persistence
 - Global exception handling
 - Request validation using Bean Validation
 - Swagger/OpenAPI documentation
@@ -28,10 +34,10 @@ The project focuses on building a secure backend using Spring Security with JWT 
 
 ### In Progress
 
-- Reading group creation and management
 - Joining and leaving reading groups
 - Passage-level comments and questions
 - Group permissions and moderation
+- Further reading group management
 
 ---
 
