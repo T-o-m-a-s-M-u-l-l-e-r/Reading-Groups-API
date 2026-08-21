@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.muller_tomas.reading_groups.dto.RegisterRequest;
 import com.muller_tomas.reading_groups.dto.TokenPairResponse;
 import com.muller_tomas.reading_groups.exception.DuplicateUserException;
+import com.muller_tomas.reading_groups.exception.UserNotFoundException;
 import com.muller_tomas.reading_groups.model.User;
 import com.muller_tomas.reading_groups.repository.UserRepository;
 import com.muller_tomas.reading_groups.token.JwtTokenProvider;
@@ -14,9 +15,9 @@ import com.muller_tomas.reading_groups.token.JwtTokenProvider.TokenType;
 
 @Service
 public class UserService {
-	private JwtTokenProvider jwtTokenProvider;
-	private UserRepository userRepository;
-	private BCryptPasswordEncoder passwordEncoder;
+	private final JwtTokenProvider jwtTokenProvider;
+	private final UserRepository userRepository;
+	private final BCryptPasswordEncoder passwordEncoder;
 
 	public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
 			JwtTokenProvider jwtTokenProvider) {
@@ -53,7 +54,7 @@ public class UserService {
 
 	public User findUserByUsernameOrEmail(String login) throws UsernameNotFoundException {
 		return userRepository.findByUsername(login).or(() -> userRepository.findByEmail(login))
-				.orElseThrow(() -> new UsernameNotFoundException("User with specified login not found"));
+				.orElseThrow(() -> new UserNotFoundException("User with specified login not found"));
 	}
 
 }

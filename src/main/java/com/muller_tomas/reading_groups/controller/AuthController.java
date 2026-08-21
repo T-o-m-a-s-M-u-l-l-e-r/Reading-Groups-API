@@ -22,8 +22,8 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/auth")
 @RestController
 public class AuthController {
-	private AuthService authService;
-	private TokenExtractor tokenExtractor;
+	private final AuthService authService;
+	private final TokenExtractor tokenExtractor;
 
 	public AuthController(AuthService authService, TokenExtractor tokenExtractor) {
 		this.authService = authService;
@@ -32,9 +32,9 @@ public class AuthController {
 
 	@PostMapping("/login")
 	@Operation(summary = "Authenticate user login", description = "Validates credentials (username/email and password) and returns an access and a refresh token")
-    @ApiResponse(responseCode = "200", description = "Login successful")
-	@ApiResponse(responseCode = "400", description = "Validation failed (e.g., empty fields")
-    @ApiResponse(responseCode = "401", description = "Invalid credentials")
+	@ApiResponse(responseCode = "200", description = "Login successful")
+	@ApiResponse(responseCode = "400", description = "Validation failed (e.g., empty fields)")
+	@ApiResponse(responseCode = "401", description = "Invalid credentials")
 	public ResponseEntity<TokenPairResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
 		TokenPairResponse tokenPairResponse = authService.loginUser(loginRequest);
 		return ResponseEntity.ok(tokenPairResponse);
@@ -42,9 +42,9 @@ public class AuthController {
 
 	@PostMapping("/refresh")
 	@Operation(summary = "Request a new access token", description = "Validates refresh token and returns an access token")
-    @ApiResponse(responseCode = "200", description = "Access token returned")
+	@ApiResponse(responseCode = "200", description = "Access token returned")
 	@ApiResponse(responseCode = "400", description = "Invalid Authorization header")
-    @ApiResponse(responseCode = "401", description = "Invalid refresh token")
+	@ApiResponse(responseCode = "401", description = "Invalid refresh token")
 	@ApiResponse(responseCode = "403", description = "Refresh token revoked")
 	public ResponseEntity<AccessTokenResponse> refreshToken(@RequestHeader("Authorization") String refreshToken) {
 		String token = tokenExtractor.extractTokenFromHeader(refreshToken);
@@ -54,9 +54,9 @@ public class AuthController {
 
 	@PostMapping("/logout")
 	@Operation(summary = "Logout user", description = "Performs logout based on refresh token")
-    @ApiResponse(responseCode = "204", description = "Successful logout")
+	@ApiResponse(responseCode = "204", description = "Successful logout")
 	@ApiResponse(responseCode = "400", description = "Invalid Authorization header")
-    @ApiResponse(responseCode = "401", description = "Invalid refresh token")
+	@ApiResponse(responseCode = "401", description = "Invalid refresh token")
 	@ApiResponse(responseCode = "403", description = "Refresh token revoked")
 	public ResponseEntity<Void> logout(@RequestHeader("Authorization") String refreshToken) {
 		String token = tokenExtractor.extractTokenFromHeader(refreshToken);

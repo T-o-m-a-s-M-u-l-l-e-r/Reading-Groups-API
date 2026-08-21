@@ -28,13 +28,6 @@ public class TokenPairResponse {
 	}
 
 	@Override
-	public String toString() {
-		return "TokenPairResponse{accessToken=%s..., refreshToken=%s...}".formatted(
-				accessToken.substring(0, Math.min(20, accessToken.length())),
-				refreshToken.substring(0, Math.min(20, refreshToken.length())));
-	}
-
-	@Override
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;

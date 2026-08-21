@@ -15,7 +15,7 @@ public class TokenExtractorTest {
 	@BeforeEach
 	public void setUp() {
 		tokenExtractor = new TokenExtractor();
-		exampleToken = "eyJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiQUNDRVNTIiwic3ViIjoiOSIsImlhdCI6MTc4NTYwMDY1MywiZXhwIjoxNzg1NjAxNTUzfQ.a4Hh0IDvip6zz-FYiunc40UyXn5pDJLmWZxJqNjo-Bo";
+		exampleToken = "test-token";
 	}
 	
 	@Test

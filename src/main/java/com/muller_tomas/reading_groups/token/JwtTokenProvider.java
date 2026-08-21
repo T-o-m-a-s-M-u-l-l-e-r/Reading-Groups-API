@@ -3,6 +3,7 @@ package com.muller_tomas.reading_groups.token;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
@@ -17,17 +18,17 @@ import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtTokenProvider {
-	private SecretKey signingKey;
+	private final SecretKey signingKey;
 	private static final String tokenTypeClaim = "token_type";
 
 	public enum TokenType {
 		ACCESS, REFRESH;
 
-		public long getValidityInMilliseconds() {
+		public Duration getValidityDuration() {
 
 			return switch (this) {
-			case ACCESS -> 900000;
-			case REFRESH -> 604800000;
+			case ACCESS -> Duration.ofMinutes(15);
+			case REFRESH -> Duration.ofDays(7);
 			};
 
 		}
@@ -47,7 +48,7 @@ public class JwtTokenProvider {
 
 	public String createToken(int userId, TokenType tokenType) {
 		Date now = new Date();
-		Date validity = new Date(now.getTime() + tokenType.getValidityInMilliseconds());
+		Date validity = new Date(now.getTime() + tokenType.getValidityDuration().toMillis());
 
 		return Jwts.builder().claim(tokenTypeClaim, tokenType.toString()).subject(String.valueOf(userId)).issuedAt(now)
 				.expiration(validity).signWith(signingKey).compact();

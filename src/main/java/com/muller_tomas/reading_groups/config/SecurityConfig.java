@@ -18,8 +18,8 @@ import jakarta.servlet.http.HttpServletResponse;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-	private JwtTokenFilter jwtTokenFilter;
-	private List<String> publicPaths;
+	private final JwtTokenFilter jwtTokenFilter;
+	private final List<String> publicPaths;
 
 	public SecurityConfig(JwtTokenFilter jwtTokenFilter, @Value("${app.public.paths}") List<String> publicPaths) {
 		this.jwtTokenFilter = jwtTokenFilter;
@@ -28,12 +28,10 @@ public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
 		http.csrf(csrf -> csrf.disable());
 		http.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-		http.authorizeHttpRequests(auth -> auth.requestMatchers(publicPaths.toArray(new String[0])
-
-		).permitAll().anyRequest().authenticated());
+		http.authorizeHttpRequests(auth -> auth.requestMatchers(publicPaths.toArray(new String[0])).permitAll()
+				.anyRequest().authenticated());
 		http.exceptionHandling(ex -> ex.accessDeniedHandler(
 				(request, response, exn) -> response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied")));
 		http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

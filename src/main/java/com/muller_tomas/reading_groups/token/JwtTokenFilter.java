@@ -22,11 +22,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
-	private JwtTokenProvider jwtTokenProvider;
-	private List<String> publicPaths;
-	private TokenExtractor tokenExtractor;
+	private final JwtTokenProvider jwtTokenProvider;
+	private final List<String> publicPaths;
+	private final TokenExtractor tokenExtractor;
 
-	public JwtTokenFilter(JwtTokenProvider jwtTokenProvider, @Value("${app.public.paths}") List<String> publicPaths, TokenExtractor tokenExtractor) {
+	public JwtTokenFilter(JwtTokenProvider jwtTokenProvider, @Value("${app.public.paths}") List<String> publicPaths,
+			TokenExtractor tokenExtractor) {
 		this.jwtTokenProvider = jwtTokenProvider;
 		this.publicPaths = publicPaths;
 		this.tokenExtractor = tokenExtractor;
@@ -49,37 +50,29 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
+		String header = request.getHeader("Authorization");
+		String token = tokenExtractor.extractTokenFromHeader(header);
+
+		boolean valid = jwtTokenProvider.isTokenValid(token);
+		TokenType tokenType;
+
 		try {
-			String header = request.getHeader("Authorization");
-			String token = tokenExtractor.extractTokenFromHeader(header);
-
-			boolean valid = jwtTokenProvider.isTokenValid(token);
-			TokenType tokenType;
-
-			try {
-				tokenType = jwtTokenProvider.getTokenType(token);
-			} catch (IllegalArgumentException e) {
-				throw new InvalidTokenTypeException("Invalid token type");
-			}
-
-			if (!valid) {
-				throw new BadCredentialsException("Invalid token");
-			}
-
-			if (tokenType != TokenType.ACCESS) {
-				throw new InvalidTokenTypeException("Invalid token type");
-			}
-
-			int userId = jwtTokenProvider.getUserId(token);
-			Authentication authentication = new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-		} catch (BadCredentialsException e) {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
-			return;
-		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
-			return;
+			tokenType = jwtTokenProvider.getTokenType(token);
+		} catch (IllegalArgumentException e) {
+			throw new InvalidTokenTypeException("Invalid token type");
 		}
+
+		if (!valid) {
+			throw new BadCredentialsException("Invalid token");
+		}
+
+		if (tokenType != TokenType.ACCESS) {
+			throw new InvalidTokenTypeException("Invalid token type");
+		}
+
+		int userId = jwtTokenProvider.getUserId(token);
+		Authentication authentication = new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
+		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		filterChain.doFilter(request, response);
 	}

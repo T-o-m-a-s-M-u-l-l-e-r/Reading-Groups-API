@@ -17,9 +17,9 @@ import com.muller_tomas.reading_groups.token.JwtTokenProvider.TokenType;
 
 @Service
 public class AuthService {
-	private JwtTokenProvider tokenProvider;
-	private UserService userService;
-	private BCryptPasswordEncoder passwordEncoder;
+	private final JwtTokenProvider tokenProvider;
+	private final UserService userService;
+	private final BCryptPasswordEncoder passwordEncoder;
 	private HashSet<String> refreshTokenBlacklist;
 
 	public AuthService(UserService userService, BCryptPasswordEncoder passwordEncoder,

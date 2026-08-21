@@ -1,7 +1,7 @@
 package com.muller_tomas.reading_groups.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,29 +12,29 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="Users")
+@Table(name = "Users")
 public class User {
 	@Id
-	@GeneratedValue (strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
 	private int id;
-	
-	@Column(length=25, nullable=false, unique=true)
+
+	@Column(length = 25, nullable = false, unique = true)
 	private String username;
-	
-	@Column(length=100, nullable=false, unique=true)
+
+	@Column(length = 100, nullable = false, unique = true)
 	private String email;
-	
-	@Column(name="password_hash", length=100, nullable=false, unique=false)
+
+	@Column(name = "password_hash", length = 100, nullable = false, unique = false)
 	private String passwordHash;
-	
+
 	@ManyToMany(mappedBy = "users")
-    private List<Group> groups = new ArrayList<>();
-	
+	private Set<Group> groups = new HashSet<>();
+
 	public User() {
 	}
 
-	public User(int id, String username, String email, String passwordHash, List<Group> groups) {
+	public User(int id, String username, String email, String passwordHash, HashSet<Group> groups) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -42,7 +42,7 @@ public class User {
 		this.passwordHash = passwordHash;
 		this.groups = groups;
 	}
-	
+
 	public User(String username, String email, String passwordHash) {
 		super();
 		this.username = username;
@@ -80,6 +80,14 @@ public class User {
 
 	public void setPasswordHash(String passwordHash) {
 		this.passwordHash = passwordHash;
+	}
+
+	public Set<Group> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(Set<Group> groups) {
+		this.groups = groups;
 	}
 
 }
