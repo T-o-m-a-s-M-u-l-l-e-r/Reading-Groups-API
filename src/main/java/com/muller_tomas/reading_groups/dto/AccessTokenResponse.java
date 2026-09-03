@@ -7,6 +7,10 @@ public class AccessTokenResponse {
 	public AccessTokenResponse(String accessToken) {
 		this.accessToken = accessToken;
 	}
+	
+	public AccessTokenResponse() {
+		super();
+	}
 
 	public String getAccessToken() {
 		return accessToken;

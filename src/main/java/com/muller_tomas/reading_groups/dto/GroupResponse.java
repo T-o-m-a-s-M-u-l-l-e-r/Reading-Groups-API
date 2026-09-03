@@ -15,6 +15,10 @@ public class GroupResponse {
 		this.createdAt = createdAt;
 		this.groupName = groupName;
 	}
+	
+	public GroupResponse() {
+		
+	}
 
 	public int getId() {
 		return id;

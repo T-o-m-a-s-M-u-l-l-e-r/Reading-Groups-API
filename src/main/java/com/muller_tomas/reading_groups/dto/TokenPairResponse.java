@@ -5,6 +5,10 @@ import java.util.Objects;
 public class TokenPairResponse {
 	private String accessToken;
 	private String refreshToken;
+	
+	public TokenPairResponse() {
+		super();
+	}
 
 	public TokenPairResponse(String accessToken, String refreshToken) {
 		this.accessToken = accessToken;

@@ -6,21 +6,19 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.HashSet;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.muller_tomas.reading_groups.TestDataFactory;
 import com.muller_tomas.reading_groups.dto.RegisterRequest;
 import com.muller_tomas.reading_groups.dto.TokenPairResponse;
 import com.muller_tomas.reading_groups.exception.DuplicateUserException;
-import com.muller_tomas.reading_groups.model.Group;
 import com.muller_tomas.reading_groups.model.User;
 import com.muller_tomas.reading_groups.repository.UserRepository;
 import com.muller_tomas.reading_groups.token.JwtTokenProvider;
@@ -38,62 +36,55 @@ public class UserServiceTest {
 
 	@Mock
 	private BCryptPasswordEncoder passwordEncoder;
-	private String exampleEmail, exampleUsername, examplePassword, exampleAccessToken, exampleRefreshToken, examplePasswordHash;
-	private int exampleId;
 
 	@BeforeEach
 	public void setUp() {
 		userService = new UserService(userRepository, passwordEncoder, jwtTokenProvider);
-		exampleEmail = "email@gmail.com";
-		exampleUsername = "steve2";
-		examplePassword = "Password123";
-		examplePasswordHash = "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy";
-		exampleId = 1;
-		exampleAccessToken = "test-access-token";
-		exampleRefreshToken = "test-refresh-token";
 	}
 
 	@Test
 	public void createUser_shouldThrowDuplicateUserException_whenUsernameExists() {
-		User duplicatedUser = new User(exampleId, exampleUsername, "email2@gmail.com", examplePasswordHash,
-				new HashSet<Group>());
-		RegisterRequest registerRequest = new RegisterRequest(exampleEmail, exampleUsername, examplePassword);
+		User duplicatedUser = TestDataFactory.getSavedUser();
+		RegisterRequest registerRequest = TestDataFactory.getRegisterRequest();
 
-		when(userRepository.findByUsername(exampleUsername)).thenReturn(Optional.of(duplicatedUser));
+		when(userRepository.findByUsername(registerRequest.getUsername())).thenReturn(Optional.of(duplicatedUser));
 		assertThrows(DuplicateUserException.class, () -> userService.createUser(registerRequest));
 	}
 
 	@Test
 	public void createUser_shouldThrowDuplicateUserException_whenEmailExists() {
-		User duplicatedUser = new User(exampleId, "john5", exampleEmail, examplePasswordHash, new HashSet<Group>());
-		RegisterRequest registerRequest = new RegisterRequest(exampleEmail, exampleUsername, examplePassword);
+			User duplicatedUser = TestDataFactory.getSavedUser();
+			RegisterRequest registerRequest = TestDataFactory.getRegisterRequest();
 
-		when(userRepository.findByEmail(exampleEmail)).thenReturn(Optional.of(duplicatedUser));
-		assertThrows(DuplicateUserException.class, () -> userService.createUser(registerRequest));
-	}
+			when(userRepository.findByEmail(registerRequest.getEmail())).thenReturn(Optional.of(duplicatedUser));
+			assertThrows(DuplicateUserException.class, () -> userService.createUser(registerRequest));
+		}
 
 	@Test
 	public void createUser_shouldReturnTokenPairResponse_whenRequestIsValid() {
-		RegisterRequest registerRequest = new RegisterRequest(exampleEmail, exampleUsername, examplePassword);
+		RegisterRequest registerRequest = TestDataFactory.getRegisterRequest();
+		String examplePaswordHash = TestDataFactory.examplePasswordHash;
 
-		when(userRepository.findByUsername(exampleUsername)).thenReturn(Optional.empty());
-		when(userRepository.findByEmail(exampleEmail)).thenReturn(Optional.empty());
-		when(passwordEncoder.encode(examplePassword)).thenReturn(examplePasswordHash);
+		when(userRepository.findByUsername(registerRequest.getUsername())).thenReturn(Optional.empty());
+		when(userRepository.findByEmail(registerRequest.getEmail())).thenReturn(Optional.empty());
+		when(passwordEncoder.encode(registerRequest.getPassword())).thenReturn(examplePaswordHash);
 
-		User createdUser = new User(exampleId, exampleUsername, exampleEmail, examplePasswordHash,
-				new HashSet<Group>());
-		when(userRepository.save(ArgumentMatchers.any(User.class))).thenReturn(createdUser);
-
-		when(jwtTokenProvider.createToken(createdUser.getId(), TokenType.ACCESS)).thenReturn(exampleAccessToken);
-		when(jwtTokenProvider.createToken(createdUser.getId(), TokenType.REFRESH)).thenReturn(exampleRefreshToken);
-
-		TokenPairResponse tokenPair = userService.createUser(registerRequest);
+		User createdUser = TestDataFactory.getCreatedUser();
+		User savedUser = TestDataFactory.getSavedUser();
+		when(userRepository.save(createdUser)).thenReturn(savedUser);
 		
-		verify(userRepository, times(1)).findByUsername(exampleUsername);
-		verify(userRepository, times(1)).findByEmail(exampleEmail);
-		verify(userRepository, times(1)).save(ArgumentMatchers.any(User.class));
+		String exampleAccessToken = TestDataFactory.exampleAccessToken;
+		String exampleRefreshToken = TestDataFactory.exampleRefreshToken;
+
+		when(jwtTokenProvider.createToken(savedUser.getId(), TokenType.ACCESS)).thenReturn(exampleAccessToken);
+		when(jwtTokenProvider.createToken(savedUser.getId(), TokenType.REFRESH)).thenReturn(exampleRefreshToken);
+
+		TokenPairResponse tokenPairResponse = userService.createUser(registerRequest);
+		assertEquals(TestDataFactory.getTokenPairResponse(), tokenPairResponse);
 		
-		assertEquals(new TokenPairResponse(exampleAccessToken, exampleRefreshToken), tokenPair);
+		verify(userRepository, times(1)).findByUsername(registerRequest.getUsername());
+		verify(userRepository, times(1)).findByEmail(registerRequest.getEmail());
+		verify(userRepository, times(1)).save(createdUser);
 	}
 
 }

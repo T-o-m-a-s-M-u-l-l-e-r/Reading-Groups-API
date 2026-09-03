@@ -1,5 +1,9 @@
 package com.muller_tomas.reading_groups.dto;
 
+import java.util.Objects;
+
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -21,6 +25,10 @@ public class RegisterRequest {
 		this.email = email;
 		this.username = username;
 		this.password = password;
+	}
+
+	public RegisterRequest() {
+		super();
 	}
 
 	public String getEmail() {
@@ -45,6 +53,23 @@ public class RegisterRequest {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+
+		if (!(obj instanceof RegisterRequest)) {
+			return false;
+		}
+
+		RegisterRequest req = (RegisterRequest) obj;
+
+		return password.equals(req.getPassword()) && username.equals(req.getUsername()) && email.equals(req.getEmail());
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(password, username, email);
 	}
 
 }

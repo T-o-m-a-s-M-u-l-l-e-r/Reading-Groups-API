@@ -12,6 +12,10 @@ public class GroupCreationRequest {
 	@NotNull(message ="Reading text cannot be empty")
 	private MultipartFile readingText;
 	
+	public GroupCreationRequest() {
+		super();
+	}
+	
 	public String getGroupName() {
 		return groupName;
 	}

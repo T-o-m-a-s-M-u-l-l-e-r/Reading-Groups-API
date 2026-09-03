@@ -9,6 +9,10 @@ public class UserResponse {
 		this.userId = userId;
 		this.username = username;
 	}
+	
+	public UserResponse() {
+		super();
+	}
 
 	public int getUserId() {
 		return userId;

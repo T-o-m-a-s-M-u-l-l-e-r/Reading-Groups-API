@@ -14,6 +14,10 @@ public class LoginRequest {
 		this.login = login;
 		this.password = password;
 	}
+	
+	public LoginRequest() {
+		
+	}
 
 	public String getLogin() {
 		return login;

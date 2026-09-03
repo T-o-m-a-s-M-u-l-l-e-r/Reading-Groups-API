@@ -1,6 +1,7 @@
 package com.muller_tomas.reading_groups.model;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -88,6 +89,21 @@ public class User {
 
 	public void setGroups(Set<Group> groups) {
 		this.groups = groups;
+	}
+
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		
+		if (!(o instanceof User))
+			return false;
+		
+		User user = (User) o;
+		return Objects.equals(id, user.id);
+	}
+
+	public int hashCode() {
+		return Objects.hashCode(id);
 	}
 
 }
