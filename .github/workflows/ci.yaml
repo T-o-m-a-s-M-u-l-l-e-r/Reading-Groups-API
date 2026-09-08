@@ -53,5 +53,5 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
-              ghcr.io/${{ github.repository_owner }}/reading-groups-api:latest
-              ghcr.io/${{ github.repository_owner }}/reading-groups-api:${{ github.sha }}
+              ghcr.io/t-o-m-a-s-m-u-l-l-e-r/reading-groups-api:latest
+              ghcr.io/t-o-m-a-s-m-u-l-l-e-r/reading-groups-api:${{ github.sha }}
