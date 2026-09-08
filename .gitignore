@@ -1,5 +1,6 @@
-# Environment file
+# Environment files
 .env
+.env.local
 
 # Compiled class file
 *.class
