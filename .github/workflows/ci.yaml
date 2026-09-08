@@ -39,4 +39,4 @@ jobs:
           context: .
           push: false
           cache-from: type=gha
-          cache-to: typa=gha,mode=max
+          cache-to: type=gha,mode=max
