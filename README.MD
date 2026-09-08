@@ -43,7 +43,7 @@ The project focuses on building a secure backend using Spring Security with JWT 
 
 ## Screenshots
 
-### Swagger API Documentation
+### API Documentation (Swagger)
 
 ![Swagger UI](screenshots/swagger-ui.png)
 
