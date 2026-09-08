@@ -50,7 +50,6 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          tags: ghcr.io/${{ github.repository_owner }}/reading-groups-api:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
