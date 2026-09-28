@@ -1,6 +1,8 @@
 # Environment files
 .env
-.env.local
+.env.*
+!.env.example
+!.env.*.example
 
 # Compiled class file
 *.class
@@ -14,7 +16,7 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# Package Files #
+# Package Files
 *.jar
 *.war
 *.nar
@@ -23,18 +25,27 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# Virtual machine crash logs
 hs_err_pid*
 replay_pid*
 
 # Maven build output
 target/
 
+# Frontend / Node
+node_modules/
+dist/
+build/
+
 # Eclipse / Spring Tool Suite
 .settings/
 .classpath
 .project
 bin/
+
+# IntelliJ IDEA
+.idea/
+*.iml
 
 # Runtime uploaded files
 uploads/

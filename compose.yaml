@@ -1,14 +1,26 @@
 services:
 
+  caddy:
+    build: frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+
   database:
-    image: postgres:19beta3-alpine3.24
+    image: postgres:18-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - database_data:/var/lib/postgresql
-      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./deployment/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
@@ -19,9 +31,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    build: .
-    ports:
-      - "8080:8080"
+    build: backend
+    restart: unless-stopped
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/${DB_NAME}
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
@@ -31,6 +42,7 @@ services:
       - file_uploads:/app/uploads
 
 volumes:
-
   database_data:
   file_uploads:
+  caddy_data:
+  caddy_config:
