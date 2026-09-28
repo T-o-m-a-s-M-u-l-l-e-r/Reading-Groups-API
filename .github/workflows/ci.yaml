@@ -90,3 +90,18 @@ jobs:
               ghcr.io/t-o-m-a-s-m-u-l-l-e-r/reading-groups-web:latest
               ghcr.io/t-o-m-a-s-m-u-l-l-e-r/reading-groups-web:${{ github.sha }}
 
+  deploy:
+    needs: [backend_build, frontend_build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd ~/reading-groups-api
+            docker compose -f compose.prod.yaml pull
+            docker compose -f compose.prod.yaml up -d
