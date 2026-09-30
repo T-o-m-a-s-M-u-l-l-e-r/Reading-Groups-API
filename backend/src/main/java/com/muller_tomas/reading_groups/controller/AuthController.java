@@ -4,7 +4,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.muller_tomas.reading_groups.dto.AccessTokenResponse;
@@ -19,7 +18,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @Tag(name = "Authentication", description = "Endpoints for user login and token management")
-@RequestMapping("/api/auth")
 @RestController
 public class AuthController {
 	private final AuthService authService;
@@ -30,17 +28,18 @@ public class AuthController {
 		this.tokenExtractor = tokenExtractor;
 	}
 
-	@PostMapping("/login")
+	@PostMapping("/api/auth/login")
 	@Operation(summary = "Authenticate user login", description = "Validates credentials (username/email and password) and returns an access and a refresh token")
 	@ApiResponse(responseCode = "200", description = "Login successful")
 	@ApiResponse(responseCode = "400", description = "Validation failed (e.g., empty fields)")
 	@ApiResponse(responseCode = "401", description = "Invalid credentials")
+	@ApiResponse(responseCode = "404", description = "User not found")
 	public ResponseEntity<TokenPairResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
 		TokenPairResponse tokenPairResponse = authService.loginUser(loginRequest);
 		return ResponseEntity.ok(tokenPairResponse);
 	}
 
-	@PostMapping("/refresh")
+	@PostMapping("/api/auth/refresh")
 	@Operation(summary = "Request a new access token", description = "Validates refresh token and returns an access token")
 	@ApiResponse(responseCode = "200", description = "Access token returned")
 	@ApiResponse(responseCode = "400", description = "Invalid Authorization header")
@@ -52,7 +51,7 @@ public class AuthController {
 		return ResponseEntity.ok(new AccessTokenResponse(accessToken));
 	}
 
-	@PostMapping("/logout")
+	@PostMapping("/api/auth/logout")
 	@Operation(summary = "Logout user", description = "Performs logout based on refresh token")
 	@ApiResponse(responseCode = "204", description = "Successful logout")
 	@ApiResponse(responseCode = "400", description = "Invalid Authorization header")

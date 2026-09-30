@@ -56,5 +56,9 @@ public class UserService {
 		return userRepository.findByUsername(login).or(() -> userRepository.findByEmail(login))
 				.orElseThrow(() -> new UserNotFoundException("User with specified login not found"));
 	}
+	
+	public User findUserByUserId(int userId) {
+		return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User with specified id not found"));
+	}
 
 }

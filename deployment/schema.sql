@@ -30,7 +30,9 @@ CREATE TABLE COMMENTS (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
     comment_page_number INT NOT NULL,
-    comment_page_occurrence INT NOT NULL
+    comment_page_occurrence INT NOT NULL,
+    group_id INT NOT NULL,
+    FOREIGN KEY (group_id) REFERENCES GROUPS(group_id)
 );
 
 CREATE TABLE USERS_GROUPS (
@@ -39,4 +41,18 @@ CREATE TABLE USERS_GROUPS (
     PRIMARY KEY (user_id, group_id),
     FOREIGN KEY (user_id) REFERENCES USERS(user_id),
     FOREIGN KEY (group_id) REFERENCES GROUPS(group_id)
+);
+
+CREATE TABLE INVITES (
+    invite_id SERIAL PRIMARY KEY,
+    group_id INT NOT NULL,
+    FOREIGN KEY (group_id)
+        REFERENCES GROUPS(group_id)
+        ON DELETE CASCADE,
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id)
+        REFERENCES USERS(user_id)
+        ON DELETE CASCADE,
+    sent_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (group_id, user_id)
 );

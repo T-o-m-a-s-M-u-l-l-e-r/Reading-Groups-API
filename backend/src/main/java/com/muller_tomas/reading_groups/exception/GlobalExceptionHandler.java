@@ -27,6 +27,16 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<?> handleGroupNotFound(GroupNotFoundException e) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 	}
+	
+	@ExceptionHandler(InviteNotFoundException.class)
+	public ResponseEntity<?> handleInviteNotFound(InviteNotFoundException e) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+	}
+	
+	@ExceptionHandler(CommentNotFoundException.class)
+	public ResponseEntity<?> handleCommentNotFound(CommentNotFoundException e) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+	}
 
 	@ExceptionHandler(TokenRevokedException.class)
 	public ResponseEntity<?> handleTokenRevoked(TokenRevokedException e) {

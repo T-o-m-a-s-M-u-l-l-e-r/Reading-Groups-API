@@ -1,12 +1,9 @@
 package com.muller_tomas.reading_groups.controller;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.muller_tomas.reading_groups.dto.RegisterRequest;
@@ -19,7 +16,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @Tag(name = "Users", description = "Endpoints for user operations")
-@RequestMapping("/api/users")
 @RestController
 public class UserController {
 	private final UserService userService;
@@ -28,7 +24,7 @@ public class UserController {
 		this.userService = userService;
 	}
 	
-	@PostMapping("/register")
+	@PostMapping("/api/users")
 	@Operation(summary = "Register new user", description = "Register new user based on email, username and password")
 	@ApiResponse(responseCode = "201", description = "Registration successful")
 	@ApiResponse(responseCode = "400", description = "Validation failed (e.g., empty fields, invalid email)")

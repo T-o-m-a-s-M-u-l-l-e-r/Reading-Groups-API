@@ -61,5 +61,9 @@ public class GroupService {
 		Group group = groupRepository.save(new Group(filePath, administratorUser, groupCreationRequest.getGroupName(), users));
 		return new GroupResponse(group.getId(), group.getAdministratorUser().getId(), group.getCreatedAt(), group.getGroupName());
 	}
+	
+	public Group findGroupById(int groupId) {
+		return groupRepository.findById(groupId).orElseThrow(() -> new GroupNotFoundException("Group with specified id not found"));
+	}
 
 }

@@ -49,7 +49,7 @@ public class UserControllerTest {
 
 		String jsonInput = objectMapper.writeValueAsString(registerRequest);
 
-		mockMvc.perform(post("/api/users/register").contentType(MediaType.APPLICATION_JSON).content(jsonInput))
+		mockMvc.perform(post("/api/users").contentType(MediaType.APPLICATION_JSON).content(jsonInput))
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.accessToken").value(tokenPairResponse.getAccessToken()))
 				.andExpect(jsonPath("$.refreshToken").value(tokenPairResponse.getRefreshToken()));
@@ -63,7 +63,7 @@ public class UserControllerTest {
 
 		String jsonInput = objectMapper.writeValueAsString(registerRequest);
 
-		mockMvc.perform(post("/api/users/register").contentType(MediaType.APPLICATION_JSON).content(jsonInput))
+		mockMvc.perform(post("/api/users").contentType(MediaType.APPLICATION_JSON).content(jsonInput))
 				.andExpect(status().isBadRequest());
 	}
 
@@ -76,7 +76,7 @@ public class UserControllerTest {
 		doThrow(new DuplicateUserException(errorMessage)).when(userService)
 				.createUser(any(RegisterRequest.class));
 
-		mockMvc.perform(post("/api/users/register").contentType(MediaType.APPLICATION_JSON).content(jsonInput))
+		mockMvc.perform(post("/api/users").contentType(MediaType.APPLICATION_JSON).content(jsonInput))
 				.andExpect(status().isConflict())
 				.andDo(result -> {assertEquals(errorMessage, result.getResponse().getContentAsString());});
 	}
