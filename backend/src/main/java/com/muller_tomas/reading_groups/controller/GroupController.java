@@ -2,6 +2,8 @@ package com.muller_tomas.reading_groups.controller;
 
 import java.util.Set;
 
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +40,20 @@ public class GroupController {
 	public ResponseEntity<Set<GroupResponse>> getUserGroups() {
 		int userId = (int) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		return ResponseEntity.ok(groupService.getUserGroups(userId));
+	}
+	
+	@GetMapping("/api/groups/{groupId}/reading-text")
+	@Operation(summary = "Get group reading text", description = "Retrieve the pdf reading text of a given group")
+	public ResponseEntity<Resource> getGroupReadingText(@PathVariable int groupId) {
+		int userId = (int) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Resource resource = groupService.getReadingText(userId, groupId);
+		return ResponseEntity.ok()
+		        .contentType(MediaType.APPLICATION_PDF)
+		        .header(
+		                HttpHeaders.CONTENT_DISPOSITION,
+		                "inline; filename=\"reading-text.pdf\""
+		        )
+		        .body(resource);
 	}
 
 	@GetMapping("/api/groups/{groupId}/members")

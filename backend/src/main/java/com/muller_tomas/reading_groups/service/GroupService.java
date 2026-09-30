@@ -3,7 +3,9 @@ package com.muller_tomas.reading_groups.service;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.core.io.Resource;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Service;
 
 import com.muller_tomas.reading_groups.dto.GroupCreationRequest;
@@ -23,12 +25,15 @@ public class GroupService {
 	private final UserRepository userRepository;
 	private final MapperHelper mapperHelper;
 	private final FileService fileService;
+	private final UserService userService;
 
-	public GroupService(GroupRepository groupRepository, UserRepository userRepository, MapperHelper mapperHelper, FileService fileService) {
+	public GroupService(GroupRepository groupRepository, UserRepository userRepository, MapperHelper mapperHelper,
+			FileService fileService, UserService userService) {
 		this.groupRepository = groupRepository;
 		this.userRepository = userRepository;
 		this.mapperHelper = mapperHelper;
 		this.fileService = fileService;
+		this.userService = userService;
 	}
 
 	public Set<GroupResponse> getUserGroups(int userId) throws UserNotFoundException {
@@ -52,18 +57,33 @@ public class GroupService {
 		return mapperHelper.mapUsers(users);
 	}
 
-	public GroupResponse createGroup(int userId, GroupCreationRequest groupCreationRequest) throws UserNotFoundException {
+	public Resource getReadingText(int userId, int groupId) {
+		User user = userService.findUserByUserId(userId);
+		Group group = findGroupById(groupId);
+		
+		if (!group.getUsers().contains(user)) {
+			throw new AuthorizationDeniedException("You do not have access to this group");
+		}
+
+		return fileService.loadPdf(group.getReadingTextPath());
+	}
+
+	public GroupResponse createGroup(int userId, GroupCreationRequest groupCreationRequest)
+			throws UserNotFoundException {
 		User administratorUser = userRepository.findById(userId)
 				.orElseThrow(() -> new UserNotFoundException("User with specified id not found"));
 		String filePath = fileService.saveReadingText(groupCreationRequest.getReadingText());
 		HashSet<User> users = new HashSet<User>();
 		users.add(administratorUser);
-		Group group = groupRepository.save(new Group(filePath, administratorUser, groupCreationRequest.getGroupName(), users));
-		return new GroupResponse(group.getId(), group.getAdministratorUser().getId(), group.getCreatedAt(), group.getGroupName());
+		Group group = groupRepository
+				.save(new Group(filePath, administratorUser, groupCreationRequest.getGroupName(), users));
+		return new GroupResponse(group.getId(), group.getAdministratorUser().getId(), group.getCreatedAt(),
+				group.getGroupName());
 	}
-	
+
 	public Group findGroupById(int groupId) {
-		return groupRepository.findById(groupId).orElseThrow(() -> new GroupNotFoundException("Group with specified id not found"));
+		return groupRepository.findById(groupId)
+				.orElseThrow(() -> new GroupNotFoundException("Group with specified id not found"));
 	}
 
 }
