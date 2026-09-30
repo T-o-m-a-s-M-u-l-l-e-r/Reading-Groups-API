@@ -1,12 +1,12 @@
 # Reading Groups API
 
-A Spring Boot REST API for collaborative reading and annotation. Users can create accounts, create reading groups around shared PDF texts, and retrieve groups and their members. The project is being developed toward supporting passage-level discussions, comments, and questions directly connected to shared reading materials.
+A Spring Boot REST API for collaborative reading and annotation. Users can create accounts, create reading groups around shared PDF texts, invite other users, and discuss specific passages through comments linked to the reading material.
 
-The project focuses on building a secure and maintainable backend using Spring Security, JWT authentication with access and refresh tokens, PostgreSQL, file handling and validation, RESTful API design, automated testing, containerization, and continuous integration.
+The project focuses on building a secure and maintainable backend using Spring Security, JWT authentication with access and refresh tokens, PostgreSQL, file handling and validation, RESTful API design, automated testing, containerization, and CI/CD.
 
-> **Status:** Work in progress. Authentication, reading group creation, PDF upload, and group/member retrieval are implemented. Group membership management and annotations are ongoing.
+> **Status:** Core backend functionality is implemented, including authentication, reading groups, PDF storage and retrieval, invitations, group membership, and passage-level comments. Further group management and moderation features are planned.
 
-**Tech Stack:** Java 17 · Spring Boot · Spring Security · JPA/Hibernate · PostgreSQL · JWT · Maven · Docker · Swagger/OpenAPI · JUnit 5 · Mockito · GitHub Actions
+**Tech Stack:** Java 17 · Spring Boot · Spring Security · JPA/Hibernate · PostgreSQL · JWT · Maven · Docker · Caddy · Swagger/OpenAPI · JUnit 5 · Mockito · GitHub Actions
 
 ---
 
@@ -23,22 +23,27 @@ The project focuses on building a secure and maintainable backend using Spring S
 * Request validation using Bean Validation
 * Reading group creation and retrieval
 * Reading group member retrieval
-* PDF reading material upload and storage
+* Invitation-based group membership
+* Invite creation, acceptance, and rejection
+* PDF reading material upload, retrieval, and storage
 * PDF content validation using Apache PDFBox
 * UUID-based filenames for stored reading materials
+* Passage-level comments linked to text, page number, and occurrence
+* Comment retrieval and deletion with authorization checks
 * DTO-based API request and response models
 * Global exception handling with structured API error responses
 * Swagger/OpenAPI documentation
-* Unit and controller tests
-* Dockerized application and PostgreSQL database
-* Continuous integration with GitHub Actions
+* Automated service, controller, and token tests
+* Dockerized backend, PostgreSQL database, and Caddy reverse proxy
+* CI/CD with GitHub Actions and GitHub Container Registry
+* Automated deployment to a VPS on pushes to `main`
 
-### In Progress
+### Planned
 
-* Joining and leaving reading groups
-* Passage-level comments and questions
-* Group permissions and moderation
-* Further reading group management
+* Additional reading group management
+* Group roles, permissions, and moderation
+* Expanded annotation functionality
+* Expanded automated test coverage
 
 ---
 
@@ -48,9 +53,13 @@ The REST API is documented using Swagger/OpenAPI.
 
 ![Swagger UI](screenshots/swagger-ui.png)
 
-When the application is running, the interactive Swagger UI is available at:
+When running the backend directly, the interactive Swagger UI is available at:
 
 `http://localhost:8080/swagger-ui/index.html`
+
+When running the local Docker Compose stack, it is available through Caddy at:
+
+`https://localhost/swagger-ui/index.html`
 
 Swagger UI provides the current API contract, including available endpoints, request parameters, request/response models, and authentication requirements.
 
@@ -74,25 +83,33 @@ Passwords are hashed using BCrypt and the server does not maintain HTTP sessions
 
 ---
 
+## Reading Groups and Annotations
+
+Reading groups are created with a shared PDF reading text. The creator becomes the group administrator and can invite other registered users to join the group.
+
+Group members can retrieve the shared PDF and create comments associated with a selected text section, page number, and occurrence on the page. Comments are visible only to members of the corresponding group. A comment can be deleted by its author or by the group administrator.
+
+---
+
 ## Database
 
 The project uses PostgreSQL with JPA/Hibernate for persistence.
 
-The database currently contains entities for users, reading groups, categories, and comments, with a many-to-many relationship between users and reading groups.
+The database contains entities for users, reading groups, comments, categories, and invitations, with a many-to-many relationship between users and reading groups.
 
 Hibernate is configured to validate the application entities against the existing database schema rather than generate the schema automatically.
 
 The SQL schema is available at:
 
-`src/main/resources/schema.sql`
+`deployment/schema.sql`
 
 ---
 
 ## File Storage
 
-Reading groups can be created with an uploaded PDF as their shared reading material.
+Reading groups are created with an uploaded PDF as their shared reading material.
 
-Uploaded files are validated using Apache PDFBox to verify that they contain a valid PDF document rather than relying only on the supplied filename or extension. Valid files are stored under UUID-based filenames to avoid collisions.
+Uploaded files are validated using Apache PDFBox to verify that they contain a valid, non-encrypted PDF document rather than relying only on the supplied filename or extension. Valid files are stored under UUID-based filenames to avoid collisions.
 
 By default, uploaded files are stored in:
 
@@ -110,7 +127,7 @@ For Docker:
 
 * Docker with Docker Compose support
 
-For local development:
+For local backend development:
 
 * Java 17
 * Maven, or the included Maven Wrapper
@@ -118,9 +135,13 @@ For local development:
 
 ### Docker Compose
 
-The repository includes a Dockerfile and Compose configuration for running the application together with PostgreSQL.
-
 Create an environment file based on `.env.example`:
+
+```bash
+cp .env.example .env
+```
+
+Set the PostgreSQL credentials and JWT signing secret:
 
 ```env
 DB_NAME=test_database
@@ -129,11 +150,13 @@ DB_PASSWORD=password
 JWT_SECRET=SecretKey
 ```
 
-Build and start the application and database:
+Build and start the full local stack:
 
 ```bash
 docker compose up --build
 ```
+
+The stack includes PostgreSQL, the Spring Boot API, and Caddy as the frontend server and reverse proxy.
 
 To stop the containers:
 
@@ -141,15 +164,9 @@ To stop the containers:
 docker compose down
 ```
 
-### Local Development
+### Local Backend Development
 
-For local development, create your local environment file from `.env.local.example`:
-
-```bash
-cp .env.local.example .env.local
-```
-
-Update `.env.local` with your PostgreSQL credentials and JWT secret:
+Create a PostgreSQL database and initialize it using `deployment/schema.sql`, then provide the required environment variables:
 
 ```env
 DB_URL=jdbc:postgresql://localhost:5432/<database_name>
@@ -158,25 +175,19 @@ DB_PASSWORD=<database_password>
 JWT_SECRET=<jwt_signing_secret>
 ```
 
-Load the environment variables into your shell:
-
-```bash
-source .env.local
-```
-
-The PostgreSQL database must contain the schema defined in `src/main/resources/schema.sql`.
-
-Then run the application using the Maven Wrapper:
+From the `backend` directory, run the application using the Maven Wrapper:
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
+---
+
 ## Testing
 
-The project contains automated controller and service tests using JUnit, Mockito, and Spring's testing support.
+The project contains automated controller, service, and token tests using JUnit, Mockito, and Spring's testing support.
 
-Run the test suite with:
+From the `backend` directory, run the test suite with:
 
 ```bash
 ./mvnw test
@@ -192,38 +203,45 @@ On Windows:
 
 ## CI/CD
 
-GitHub Actions runs the project's CI workflow on pushes and pull requests.
+GitHub Actions runs the pipeline on pushes and pull requests.
 
-The workflow runs the Maven test suite before building the Docker image. On pushes to `main`, the resulting image is published to GitHub Container Registry.
+The workflow:
 
-This ensures that published Docker images are built from revisions that have passed the automated test suite.
+1. Runs the backend Maven test suite.
+2. Builds the backend and frontend Docker images using Buildx and GitHub Actions caching.
+3. Publishes both images to GitHub Container Registry on pushes to `main`, tagged with `latest` and the commit SHA.
+4. Deploys the updated images to the VPS over SSH after successful builds on `main`.
+
+Production uses `compose.prod.yaml` to pull the published images and run the Spring Boot API, PostgreSQL, and Caddy services.
 
 ---
 
 ## Project Structure
 
-The backend follows a layered structure separating the API, business logic, persistence, security, and data models.
-
 ```text
-src/main/java/com/muller_tomas/reading_groups/
-├── config/         # Spring Security and application configuration
-├── controller/     # REST API controllers
-├── dto/            # Request and response DTOs
-├── exception/      # Application exceptions and global error handling
-├── model/          # JPA entities
-├── repository/     # Database repositories
-├── service/        # Application and business logic
-└── token/          # JWT creation, validation and authentication
+.
+├── backend/                  # Spring Boot REST API
+│   └── src/main/java/com/muller_tomas/reading_groups/
+│       ├── config/           # Security and application configuration
+│       ├── controller/       # REST API controllers
+│       ├── dto/              # Request and response DTOs
+│       ├── exception/        # Exceptions and global error handling
+│       ├── model/            # JPA entities
+│       ├── repository/       # Database repositories
+│       ├── service/          # Application and business logic
+│       └── token/            # JWT creation, validation and authentication
+├── deployment/              # PostgreSQL schema
+├── frontend/                # Caddy configuration and static frontend
+├── .github/workflows/       # CI/CD pipeline
+├── compose.yaml             # Local Docker Compose stack
+└── compose.prod.yaml        # Production Docker Compose stack
 ```
 
 ---
 
 ## Roadmap
 
-* Join and leave functionality for reading groups
-* Passage-level comments and questions attached to reading materials
-* Group roles, permissions, and moderation
 * Additional reading group management
+* Group roles, permissions, and moderation
+* Further passage-level annotation features
 * Expanded automated test coverage
-
-The long-term goal is to support collaborative reading groups where members can discuss specific parts of a shared text through structured, passage-level annotations.
