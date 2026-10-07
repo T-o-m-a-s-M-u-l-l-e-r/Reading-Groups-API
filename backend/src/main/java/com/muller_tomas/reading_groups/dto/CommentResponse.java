@@ -13,13 +13,15 @@ public class CommentResponse {
 	private LocalDateTime updatedAt;
 	private Integer commentPageNumber;
 	private Integer commentPageOccurrence;
+	private String authorName;
+	private Integer authorId;
 
 	public CommentResponse() {
 	}
 
 	public CommentResponse(Integer commentId, Integer groupId, Integer categoryId, Integer userId, String textSection,
 			String commentContent, LocalDateTime createdAt, LocalDateTime updatedAt, Integer commentPageNumber,
-			Integer commentPageOccurrence) {
+			Integer commentPageOccurrence, String authorName, Integer authorId) {
 		this.commentId = commentId;
 		this.groupId = groupId;
 		this.categoryId = categoryId;
@@ -30,6 +32,8 @@ public class CommentResponse {
 		this.updatedAt = updatedAt;
 		this.commentPageNumber = commentPageNumber;
 		this.commentPageOccurrence = commentPageOccurrence;
+		this.authorName = authorName;
+		this.authorId = authorId;
 	}
 
 	public Integer getCommentId() {
@@ -111,4 +115,21 @@ public class CommentResponse {
 	public void setCommentPageOccurrence(Integer commentPageOccurrence) {
 		this.commentPageOccurrence = commentPageOccurrence;
 	}
+
+	public String getAuthorName() {
+		return authorName;
+	}
+
+	public void setAuthorName(String authorName) {
+		this.authorName = authorName;
+	}
+
+	public Integer getAuthorId() {
+		return authorId;
+	}
+
+	public void setAuthorId(int authorId) {
+		this.authorId = authorId;
+	}
+
 }

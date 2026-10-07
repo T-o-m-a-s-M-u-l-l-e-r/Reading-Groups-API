@@ -77,8 +77,7 @@ public class GroupService {
 		users.add(administratorUser);
 		Group group = groupRepository
 				.save(new Group(filePath, administratorUser, groupCreationRequest.getGroupName(), users));
-		return new GroupResponse(group.getId(), group.getAdministratorUser().getId(), group.getCreatedAt(),
-				group.getGroupName());
+		return mapperHelper.mapGroup(group);
 	}
 
 	public Group findGroupById(int groupId) {

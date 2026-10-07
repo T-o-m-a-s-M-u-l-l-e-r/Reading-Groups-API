@@ -14,10 +14,13 @@ import com.muller_tomas.reading_groups.model.User;
 public class MapperHelper {
 
 	public Set<GroupResponse> mapGroups(Set<Group> groups) {
-		Set<GroupResponse> groupResponses = groups.stream().map(group -> new GroupResponse(group.getId(),
-				group.getAdministratorUser().getId(), group.getCreatedAt(), group.getGroupName()))
-				.collect(Collectors.toSet());
+		Set<GroupResponse> groupResponses = groups.stream().map(group -> mapGroup(group)).collect(Collectors.toSet());
 		return groupResponses;
+	}
+
+	public GroupResponse mapGroup(Group group) {
+		return new GroupResponse(group.getId(), group.getAdministratorUser().getId(), group.getCreatedAt(),
+				group.getGroupName(), group.getUsers().size(), group.getAdministratorUser().getUsername());
 	}
 
 	public Set<UserResponse> mapUsers(Set<User> users) {
@@ -34,13 +37,15 @@ public class MapperHelper {
 
 	public CommentResponse mapComment(Comment comment) {
 		return new CommentResponse(comment.getCommentId(), comment.getGroup().getId(),
-				comment.getCategory() != null ? comment.getCategory().getCategoryId() : null, comment.getUser().getId(), comment.getTextSection(),
-				comment.getCommentContent(), comment.getCreatedAt(), comment.getUpdatedAt(),
-				comment.getCommentPageNumber(), comment.getCommentPageOccurrence());
+				comment.getCategory() != null ? comment.getCategory().getCategoryId() : null, comment.getUser().getId(),
+				comment.getTextSection(), comment.getCommentContent(), comment.getCreatedAt(), comment.getUpdatedAt(),
+				comment.getCommentPageNumber(), comment.getCommentPageOccurrence(), comment.getUser().getUsername(),
+				comment.getUser().getId());
 	}
-	
+
 	public Set<CommentResponse> mapComments(Set<Comment> comments) {
-		Set<CommentResponse> commentResponses = comments.stream().map(comment -> mapComment(comment)).collect(Collectors.toSet());
+		Set<CommentResponse> commentResponses = comments.stream().map(comment -> mapComment(comment))
+				.collect(Collectors.toSet());
 		return commentResponses;
 	}
 

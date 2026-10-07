@@ -7,13 +7,17 @@ public class GroupResponse {
 	private int administratorUserId;
 	private LocalDateTime createdAt;
 	private String groupName;
+	private int memberCount;
+	private String administratorName;
 	
-	public GroupResponse(int id, int administratorUserId, LocalDateTime createdAt, String groupName) {
+	public GroupResponse(int id, int administratorUserId, LocalDateTime createdAt, String groupName, int memberCount, String administratorName) {
 		super();
 		this.id = id;
 		this.administratorUserId = administratorUserId;
 		this.createdAt = createdAt;
 		this.groupName = groupName;
+		this.memberCount = memberCount;
+		this.administratorName = administratorName;
 	}
 	
 	public GroupResponse() {
@@ -50,6 +54,22 @@ public class GroupResponse {
 
 	public void setGroupName(String groupName) {
 		this.groupName = groupName;
+	}
+
+	public int getMemberCount() {
+		return memberCount;
+	}
+
+	public void setMemberCount(int memberCount) {
+		this.memberCount = memberCount;
+	}
+
+	public String getAdministratorName() {
+		return administratorName;
+	}
+
+	public void setAdministratorName(String administratorName) {
+		this.administratorName = administratorName;
 	}
 
 }
