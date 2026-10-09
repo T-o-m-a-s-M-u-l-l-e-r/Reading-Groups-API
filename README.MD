@@ -1,162 +1,92 @@
-# Reading Groups API
+# Reading Groups
 
-A Spring Boot REST API for collaborative reading and annotation. Users can create accounts, create reading groups around shared PDF texts, invite other users, and discuss specific passages through comments linked to the reading material.
+A web application for creating reading groups, sharing PDF documents, and discussing texts with other members.
 
-The project focuses on building a secure and maintainable backend using Spring Security, JWT authentication with access and refresh tokens, PostgreSQL, file handling and validation, RESTful API design, automated testing, containerization, and CI/CD.
+Built with React, TypeScript, Spring Boot, and PostgreSQL. Containerized with Docker and deployed using GitHub Actions.
 
-> **Status:** Core backend functionality is implemented, including authentication, reading groups, PDF storage and retrieval, invitations, group membership, and passage-level comments. Further group management and moderation features are planned.
+**[Live application](https://reading-groups.site)**
 
-**Tech Stack:** Java 17 · Spring Boot · Spring Security · JPA/Hibernate · PostgreSQL · JWT · Maven · Docker · Caddy · Swagger/OpenAPI · JUnit 5 · Mockito · GitHub Actions
-
----
+![Reading Groups](screenshots/RG_title.png)
 
 ## Features
 
-### Implemented
+- User registration and JWT-based authentication
+- Reading group creation with PDF uploads
+- Group membership and invitations
+- In-browser PDF viewing
+- Comments associated with passages in a document
+- Group-based access control
 
-* User registration and authentication
-* JWT authentication with separate access and refresh tokens
-* Access token renewal using refresh tokens
-* Logout with refresh token revocation
-* BCrypt password hashing
-* Stateless Spring Security configuration
-* Request validation using Bean Validation
-* Reading group creation and retrieval
-* Reading group member retrieval
-* Invitation-based group membership
-* Invite creation, acceptance, and rejection
-* PDF reading material upload, retrieval, and storage
-* PDF content validation using Apache PDFBox
-* UUID-based filenames for stored reading materials
-* Passage-level comments linked to text, page number, and occurrence
-* Comment retrieval and deletion with authorization checks
-* DTO-based API request and response models
-* Global exception handling with structured API error responses
-* Swagger/OpenAPI documentation
-* Automated service, controller, and token tests
-* Dockerized backend, PostgreSQL database, and Caddy reverse proxy
-* CI/CD with GitHub Actions and GitHub Container Registry
-* Automated deployment to a VPS on pushes to `main`
+## Tech Stack
 
-### Planned
+| Component | Technologies |
+|---|---|
+| Frontend | React, TypeScript, Vite |
+| Backend | Java 17, Spring Boot, Spring Security, Spring Data JPA |
+| Database | PostgreSQL |
+| API | REST, JWT, Springdoc OpenAPI |
+| Infrastructure | Docker Compose, Caddy, GitHub Actions, GHCR |
+| Testing | JUnit 5, Mockito |
 
-* Additional reading group management
-* Group roles, permissions, and moderation
-* Expanded annotation functionality
-* Expanded automated test coverage
+## Screenshots
 
----
+### Reading and Discussion
 
-## API Documentation
+![PDF reader and comments](screenshots/RG_full.png)
 
-The REST API is documented using Swagger/OpenAPI.
+### Creating a Group
 
-![Swagger UI](screenshots/swagger-ui.png)
+![Create reading group](screenshots/RG_group.png)
 
-When running the backend directly, the interactive Swagger UI is available at:
+### Adding a Comment
 
-`http://localhost:8080/swagger-ui/index.html`
+![Add comment](screenshots/RG_comment.png)
 
-When running the local Docker Compose stack, it is available through Caddy at:
+### Login
 
-`https://localhost/swagger-ui/index.html`
+![Login page](screenshots/RG_login.png)
 
-Swagger UI provides the current API contract, including available endpoints, request parameters, request/response models, and authentication requirements.
+## Architecture
 
----
+The React frontend communicates with a Spring Boot REST API, which handles authentication, authorization, PDF storage, and database operations.
 
-## Authentication
+PostgreSQL stores application data, while uploaded PDFs are stored separately in a persistent volume.
 
-The API uses stateless JWT authentication with separate **access** and **refresh** tokens.
+In production, Caddy serves the frontend, proxies API requests to Spring Boot, and handles HTTPS.
 
-After registration or login, the client receives both tokens. The access token is used to authenticate protected requests, while the longer-lived refresh token can be exchanged for a new access token without requiring the user to log in again.
-
-The authentication flow is:
-
-1. A user registers or logs in with their credentials.
-2. The server returns an access token and a refresh token.
-3. Protected requests include the access token as a Bearer token.
-4. When the access token expires, the refresh token can be used to obtain a new one.
-5. On logout, the refresh token is revoked and can no longer be used.
-
-Passwords are hashed using BCrypt and the server does not maintain HTTP sessions.
-
----
-
-## Reading Groups and Annotations
-
-Reading groups are created with a shared PDF reading text. The creator becomes the group administrator and can invite other registered users to join the group.
-
-Group members can retrieve the shared PDF and create comments associated with a selected text section, page number, and occurrence on the page. Comments are visible only to members of the corresponding group. A comment can be deleted by its author or by the group administrator.
-
----
-
-## Database
-
-The project uses PostgreSQL with JPA/Hibernate for persistence.
-
-The database contains entities for users, reading groups, comments, categories, and invitations, with a many-to-many relationship between users and reading groups.
-
-Hibernate is configured to validate the application entities against the existing database schema rather than generate the schema automatically.
-
-The SQL schema is available at:
-
-`deployment/schema.sql`
-
----
-
-## File Storage
-
-Reading groups are created with an uploaded PDF as their shared reading material.
-
-Uploaded files are validated using Apache PDFBox to verify that they contain a valid, non-encrypted PDF document rather than relying only on the supplied filename or extension. Valid files are stored under UUID-based filenames to avoid collisions.
-
-By default, uploaded files are stored in:
-
-`./uploads`
-
-When running with Docker Compose, file storage is persisted using a Docker volume.
-
----
-
-## Running the Project
+## Running Locally
 
 ### Requirements
 
-For Docker:
+- Docker
+- Docker Compose
 
-* Docker with Docker Compose support
+Clone the repository and navigate to its root directory.
 
-For local backend development:
-
-* Java 17
-* Maven, or the included Maven Wrapper
-* PostgreSQL
-
-### Docker Compose
-
-Create an environment file based on `.env.example`:
-
-```bash
-cp .env.example .env
-```
-
-Set the PostgreSQL credentials and JWT signing secret:
+Create a `.env` file with the required configuration:
 
 ```env
-DB_NAME=test_database
+DB_NAME=reading_database
 DB_USER=database_user
-DB_PASSWORD=password
-JWT_SECRET=SecretKey
+DB_PASSWORD=your_database_password
+JWT_SECRET=your_jwt_secret
 ```
 
-Build and start the full local stack:
+Use a securely generated JWT secret.
+
+Build and start the application:
 
 ```bash
-docker compose up --build
+docker compose up -d --build
 ```
 
-The stack includes PostgreSQL, the Spring Boot API, and Caddy as the frontend server and reverse proxy.
+The application will be available at **http://localhost**.
+
+To view the logs:
+
+```bash
+docker compose logs -f
+```
 
 To stop the containers:
 
@@ -164,84 +94,52 @@ To stop the containers:
 docker compose down
 ```
 
-### Local Backend Development
+Database data and uploaded files are preserved in Docker volumes.
 
-Create a PostgreSQL database and initialize it using `deployment/schema.sql`, then provide the required environment variables:
+### Running the Frontend Separately
 
-```env
-DB_URL=jdbc:postgresql://localhost:5432/<database_name>
-DB_USERNAME=<database_username>
-DB_PASSWORD=<database_password>
-JWT_SECRET=<jwt_signing_secret>
-```
-
-From the `backend` directory, run the application using the Maven Wrapper:
+The frontend can also be started with Vite:
 
 ```bash
-./mvnw spring-boot:run
+cd frontend
+npm ci
+npm run dev
 ```
 
----
+This requires a running backend and appropriate API proxy configuration.
+
+## API Documentation
+
+The REST API is documented using Springdoc OpenAPI and Swagger UI. Endpoints cover authentication, users, groups, comments, and invitations.
+
+![Swagger API documentation](screenshots/swagger.png)
+
+When running the application locally with Docker Compose:
+
+- [Swagger UI](http://localhost/swagger-ui/index.html)
+- [OpenAPI specification](http://localhost/v3/api-docs)
 
 ## Testing
 
-The project contains automated controller, service, and token tests using JUnit, Mockito, and Spring's testing support.
-
-From the `backend` directory, run the test suite with:
+Run the backend tests from the `backend` directory:
 
 ```bash
 ./mvnw test
 ```
 
-On Windows:
+Run the frontend linter:
 
-```powershell
-.\mvnw.cmd test
+```bash
+cd frontend
+npm run lint
 ```
 
----
+## Deployment
 
-## CI/CD
+The application is deployed to a VPS using Docker Compose.
 
-GitHub Actions runs the pipeline on pushes and pull requests.
+GitHub Actions runs the backend tests, builds the frontend and backend Docker images, publishes them to GitHub Container Registry, and deploys updated images to the VPS.
 
-The workflow:
+The production configuration is defined in `compose.prod.yaml`. Caddy handles HTTPS and reverse proxying, while PostgreSQL and uploaded files use persistent Docker volumes.
 
-1. Runs the backend Maven test suite.
-2. Builds the backend and frontend Docker images using Buildx and GitHub Actions caching.
-3. Publishes both images to GitHub Container Registry on pushes to `main`, tagged with `latest` and the commit SHA.
-4. Deploys the updated images to the VPS over SSH after successful builds on `main`.
-
-Production uses `compose.prod.yaml` to pull the published images and run the Spring Boot API, PostgreSQL, and Caddy services.
-
----
-
-## Project Structure
-
-```text
-.
-├── backend/                  # Spring Boot REST API
-│   └── src/main/java/com/muller_tomas/reading_groups/
-│       ├── config/           # Security and application configuration
-│       ├── controller/       # REST API controllers
-│       ├── dto/              # Request and response DTOs
-│       ├── exception/        # Exceptions and global error handling
-│       ├── model/            # JPA entities
-│       ├── repository/       # Database repositories
-│       ├── service/          # Application and business logic
-│       └── token/            # JWT creation, validation and authentication
-├── deployment/              # PostgreSQL schema
-├── frontend/                # Caddy configuration and static frontend
-├── .github/workflows/       # CI/CD pipeline
-├── compose.yaml             # Local Docker Compose stack
-└── compose.prod.yaml        # Production Docker Compose stack
-```
-
----
-
-## Roadmap
-
-* Additional reading group management
-* Group roles, permissions, and moderation
-* Further passage-level annotation features
-* Expanded automated test coverage
+**[reading-groups.site](https://reading-groups.site)**
