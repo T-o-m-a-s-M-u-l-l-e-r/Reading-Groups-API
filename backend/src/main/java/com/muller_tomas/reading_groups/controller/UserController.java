@@ -23,12 +23,11 @@ public class UserController {
 	public UserController(UserService userService) {
 		this.userService = userService;
 	}
-	
 	@PostMapping("/api/users")
-	@Operation(summary = "Register new user", description = "Register new user based on email, username and password")
-	@ApiResponse(responseCode = "201", description = "Registration successful")
-	@ApiResponse(responseCode = "400", description = "Validation failed (e.g., empty fields, invalid email)")
-	@ApiResponse(responseCode = "409", description = "User already exists")
+	@Operation(summary = "Register user", description = "Create an account using a username, email address and password; return access and refresh tokens.")
+	@ApiResponse(responseCode = "201", description = "Account created; token pair returned")
+	@ApiResponse(responseCode = "400", description = "Invalid registration fields")
+	@ApiResponse(responseCode = "409", description = "Username or email address already in use")
 	public ResponseEntity<TokenPairResponse> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
 		TokenPairResponse tokenPairResponse = userService.createUser(registerRequest);
 		return ResponseEntity.status(HttpStatus.CREATED).body(tokenPairResponse);

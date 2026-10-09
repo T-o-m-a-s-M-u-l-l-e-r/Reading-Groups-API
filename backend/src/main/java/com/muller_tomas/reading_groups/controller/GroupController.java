@@ -32,18 +32,21 @@ public class GroupController {
 	public GroupController(GroupService groupService) {
 		this.groupService = groupService;
 	}
-
 	@GetMapping("/api/groups")
-	@Operation(summary = "Get current user's groups", description = "Retrieve all groups that the user is a member of")
-	@ApiResponse(responseCode = "200", description = "Retrieval successful")
+	@Operation(summary = "Get my groups", description = "Retrieve the reading groups the authenticated user belongs to.")
+	@ApiResponse(responseCode = "200", description = "Groups returned")
+	@ApiResponse(responseCode = "401", description = "Authentication required")
 	@ApiResponse(responseCode = "404", description = "User not found")
 	public ResponseEntity<Set<GroupResponse>> getUserGroups() {
 		int userId = (int) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		return ResponseEntity.ok(groupService.getUserGroups(userId));
 	}
-	
 	@GetMapping("/api/groups/{groupId}/reading-text")
-	@Operation(summary = "Get group reading text", description = "Retrieve the pdf reading text of a given group")
+	@Operation(summary = "Get reading text", description = "Retrieve the PDF reading text associated with a group. The response is an inline application/pdf resource; group access is checked.")
+	@ApiResponse(responseCode = "200", description = "PDF returned")
+	@ApiResponse(responseCode = "401", description = "Authentication required")
+	@ApiResponse(responseCode = "403", description = "User is not a group member")
+	@ApiResponse(responseCode = "404", description = "Group or stored PDF not found")
 	public ResponseEntity<Resource> getGroupReadingText(@PathVariable int groupId) {
 		int userId = (int) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Resource resource = groupService.getReadingText(userId, groupId);
@@ -55,22 +58,22 @@ public class GroupController {
 		        )
 		        .body(resource);
 	}
-
 	@GetMapping("/api/groups/{groupId}/members")
-	@Operation(summary = "Get group members", description = "Retrieve members of a group the user is part of")
-	@ApiResponse(responseCode = "200", description = "Retrieval successful")
-	@ApiResponse(responseCode = "401", description = "User is not part of the group")
+	@Operation(summary = "Get group members", description = "Retrieve the members of a group accessible to the authenticated user.")
+	@ApiResponse(responseCode = "200", description = "Members returned")
+	@ApiResponse(responseCode = "401", description = "Authentication required")
+	@ApiResponse(responseCode = "403", description = "User is not a group member")
 	@ApiResponse(responseCode = "404", description = "User or group not found")
 	public ResponseEntity<Set<UserResponse>> getGroupMembers(@PathVariable int groupId) {
 		int userId = (int) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		return ResponseEntity.ok(groupService.getGroupMembers(userId, groupId));
 	}
-
 	@PostMapping(path = "/api/groups", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@Operation(summary = "Create a reading group", description = "Create a reading group with specified title and administrator")
-	@ApiResponse(responseCode = "201", description = "Group created successfully")
-	@ApiResponse(responseCode = "400", description = "Invalid reading text")
-	@ApiResponse(responseCode = "500", description = "Internal server error handling file")
+	@Operation(summary = "Create reading group", description = "Create a group with a name and uploaded PDF reading text using multipart/form-data. The authenticated user becomes the administrator.")
+	@ApiResponse(responseCode = "201", description = "Group created")
+	@ApiResponse(responseCode = "400", description = "Invalid request or PDF")
+	@ApiResponse(responseCode = "401", description = "Authentication required")
+	@ApiResponse(responseCode = "500", description = "PDF could not be stored")
 	public ResponseEntity<GroupResponse> createGroup(@Valid @ModelAttribute GroupCreationRequest groupCreationRequest) {
 		int userId = (int) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		GroupResponse groupResponse = groupService.createGroup(userId, groupCreationRequest);
